@@ -23,6 +23,8 @@ func main() {
 	// 2) ประกอบชิ้นส่วน: repository (คุย DB) -> handler (คุย HTTP)
 	itemRepo := &repository.ItemRepo{DB: pool}
 	itemHandler := &handlers.ItemHandler{Repo: itemRepo}
+	npcRepo := &repository.NpcRepo{DB: pool}
+	npcHandler := &handlers.NpcHandler{Repo: npcRepo}
 
 	// 3) ผูก URL เข้ากับฟังก์ชัน
 	mux := http.NewServeMux()
@@ -31,6 +33,8 @@ func main() {
 	})
 	mux.HandleFunc("GET /api/items", itemHandler.List)
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
+	mux.HandleFunc("GET /api/npcs", npcHandler.List)
+	mux.HandleFunc("GET /api/npcs/{id}", npcHandler.Get)
 
 	// 4) เปิด server
 	port := os.Getenv("PORT")
