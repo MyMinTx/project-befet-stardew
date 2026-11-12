@@ -6,10 +6,13 @@ import (
 	"os"
 
 	"stardew-be/database"
+	"stardew-be/handlers"
+	"stardew-be/repository"
+	"stardew-be/utils"
 )
 
 func main() {
-	// 1) ต่อฐานข้อมูล ถ้าไม่ติดให้หยุดโปรแกรมเลย
+	// 1) ต่อฐานข้อมูล
 	pool, err := database.Connect()
 	if err != nil {
 		log.Fatal("cannot connect database: ", err)
@@ -17,14 +20,19 @@ func main() {
 	defer pool.Close()
 	log.Println("database connected")
 
-	// 2) ผูก URL
+	// 2) ประกอบชิ้นส่วน: repository (คุย DB) -> handler (คุย HTTP)
+	itemRepo := &repository.ItemRepo{DB: pool}
+	itemHandler := &handlers.ItemHandler{Repo: itemRepo}
+
+	// 3) ผูก URL เข้ากับฟังก์ชัน
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"status":"ok"}`))
+		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
+	mux.HandleFunc("GET /api/items", itemHandler.List)
+	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 
-	// 3) เปิด server
+	// 4) เปิด server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
