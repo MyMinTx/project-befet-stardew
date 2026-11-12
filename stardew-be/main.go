@@ -4,10 +4,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"stardew-be/database"
 	"stardew-be/handlers"
 	"stardew-be/repository"
+	"stardew-be/security"
 	"stardew-be/utils"
 )
 
@@ -20,13 +22,21 @@ func main() {
 	defer pool.Close()
 	log.Println("database connected")
 
-	// 2) ประกอบชิ้นส่วน: repository (คุย DB) -> handler (คุย HTTP)
+	// 2) เตรียมเครื่องออก token (อายุ 1 ชั่วโมงตามสัญญา)
+	tokens, err := security.NewTokenMaker(os.Getenv("JWT_SECRET"), time.Hour)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// 3) ประกอบชิ้นส่วน: repository (คุย DB) -> handler (คุย HTTP)
 	itemRepo := &repository.ItemRepo{DB: pool}
 	itemHandler := &handlers.ItemHandler{Repo: itemRepo}
 	npcRepo := &repository.NpcRepo{DB: pool}
 	npcHandler := &handlers.NpcHandler{Repo: npcRepo}
+	memberRepo := &repository.MemberRepo{DB: pool}
+	authHandler := &handlers.AuthHandler{Members: memberRepo, Tokens: tokens}
 
-	// 3) ผูก URL เข้ากับฟังก์ชัน
+	// 4) ผูก URL เข้ากับฟังก์ชัน
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
@@ -35,8 +45,10 @@ func main() {
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 	mux.HandleFunc("GET /api/npcs", npcHandler.List)
 	mux.HandleFunc("GET /api/npcs/{id}", npcHandler.Get)
+	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
+	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 
-	// 4) เปิด server
+	// 5) เปิด server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
