@@ -4,10 +4,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"stardew-be/database"
 	"stardew-be/handlers"
+	"stardew-be/middleware"
 	"stardew-be/repository"
 	"stardew-be/security"
 	"stardew-be/utils"
@@ -35,6 +37,15 @@ func main() {
 	npcHandler := &handlers.NpcHandler{Repo: npcRepo}
 	memberRepo := &repository.MemberRepo{DB: pool}
 	authHandler := &handlers.AuthHandler{Members: memberRepo, Tokens: tokens}
+	meHandler := &handlers.MeHandler{Members: memberRepo}
+	adminHandler := &handlers.AdminHandler{Members: memberRepo}
+
+	// ตัวช่วยครอบสิทธิ์: login = ต้องเข้าสู่ระบบ, admin = ต้องเข้าสู่ระบบ + role admin
+	auth := &middleware.Auth{Tokens: tokens}
+	login := auth.RequireLogin
+	admin := func(next http.HandlerFunc) http.HandlerFunc {
+		return auth.RequireLogin(middleware.RequireRole("admin", next))
+	}
 
 	// 4) ผูก URL เข้ากับฟังก์ชัน
 	mux := http.NewServeMux()
@@ -48,11 +59,23 @@ func main() {
 	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 
-	// 5) เปิด server
+	// 👤 Member
+	mux.HandleFunc("GET /api/me", login(meHandler.Get))
+	mux.HandleFunc("PUT /api/me", login(meHandler.Update))
+	mux.HandleFunc("PUT /api/me/password", login(meHandler.ChangePassword))
+
+	// 🛡️ Admin
+	mux.HandleFunc("GET /api/admin/members", admin(adminHandler.ListMembers))
+
+	// 5) ครอบ mux ด้วย middleware ที่ใช้กับทุก request: Logger นอกสุด → CORS → mux
+	origins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
+	handler := middleware.Logger(middleware.CORS(origins, mux))
+
+	// 6) เปิด server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
-	log.Println("server running on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, mux))
+	log.Println("server running on port", port, "| allowed origins:", origins)
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }

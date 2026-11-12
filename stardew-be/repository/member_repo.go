@@ -58,3 +58,50 @@ func (r *MemberRepo) FindByID(ctx context.Context, id int64) (models.Member, err
 	}
 	return m, err
 }
+
+
+// UpdateProfile แก้ชื่อที่แสดงและรูปโปรไฟล์ แล้วคืนข้อมูลล่าสุด
+func (r *MemberRepo) UpdateProfile(ctx context.Context, id int64, displayName string, avatarURL *string) (models.Member, error) {
+	row := r.DB.QueryRow(ctx, `
+		UPDATE members
+		SET display_name = $2, avatar_url = $3, updated_at = now()
+		WHERE id = $1
+		RETURNING `+memberColumns, id, displayName, avatarURL)
+	m, err := scanMember(row)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return models.Member{}, ErrNotFound
+	}
+	return m, err
+}
+
+// UpdatePassword เปลี่ยน hash ของรหัสผ่าน
+func (r *MemberRepo) UpdatePassword(ctx context.Context, id int64, passwordHash string) error {
+	tag, err := r.DB.Exec(ctx, `
+		UPDATE members SET password_hash = $2, updated_at = now() WHERE id = $1`, id, passwordHash)
+	if err != nil {
+		return err
+	}
+	if tag.RowsAffected() == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// List คืนสมาชิกทุกคน (ใช้ในหน้า admin)
+func (r *MemberRepo) List(ctx context.Context) ([]models.Member, error) {
+	rows, err := r.DB.Query(ctx, `SELECT `+memberColumns+` FROM members ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	members := []models.Member{}
+	for rows.Next() {
+		m, err := scanMember(rows)
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, m)
+	}
+	return members, rows.Err()
+}
