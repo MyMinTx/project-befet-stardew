@@ -39,6 +39,11 @@ func main() {
 	authHandler := &handlers.AuthHandler{Members: memberRepo, Tokens: tokens}
 	meHandler := &handlers.MeHandler{Members: memberRepo}
 	adminHandler := &handlers.AdminHandler{Members: memberRepo}
+	guideRepo := &repository.GuideRepo{DB: pool}
+	commentRepo := &repository.CommentRepo{DB: pool}
+	guideHandler := &handlers.GuideHandler{Guides: guideRepo, Comments: commentRepo}
+	bookmarkHandler := &handlers.BookmarkHandler{Bookmarks: &repository.BookmarkRepo{DB: pool}, Guides: guideRepo}
+	friendshipHandler := &handlers.FriendshipHandler{Friendships: &repository.FriendshipRepo{DB: pool}}
 
 	// ตัวช่วยครอบสิทธิ์: login = ต้องเข้าสู่ระบบ, admin = ต้องเข้าสู่ระบบ + role admin
 	auth := &middleware.Auth{Tokens: tokens}
@@ -52,10 +57,13 @@ func main() {
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
-	mux.HandleFunc("GET /api/items", itemHandler.List)
+		mux.HandleFunc("GET /api/items", itemHandler.List)
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 	mux.HandleFunc("GET /api/npcs", npcHandler.List)
 	mux.HandleFunc("GET /api/npcs/{id}", npcHandler.Get)
+	mux.HandleFunc("GET /api/guides", guideHandler.List)
+	mux.HandleFunc("GET /api/guides/{id}", guideHandler.Get)
+	mux.HandleFunc("GET /api/guides/{id}/comments", guideHandler.ListComments)
 	mux.HandleFunc("POST /api/auth/register", authHandler.Register)
 	mux.HandleFunc("POST /api/auth/login", authHandler.Login)
 
@@ -63,6 +71,14 @@ func main() {
 	mux.HandleFunc("GET /api/me", login(meHandler.Get))
 	mux.HandleFunc("PUT /api/me", login(meHandler.Update))
 	mux.HandleFunc("PUT /api/me/password", login(meHandler.ChangePassword))
+	mux.HandleFunc("POST /api/guides/{id}/comments", login(guideHandler.AddComment))
+	mux.HandleFunc("DELETE /api/comments/{commentId}", login(guideHandler.DeleteComment))
+	mux.HandleFunc("GET /api/me/bookmarks", login(bookmarkHandler.List))
+	mux.HandleFunc("PUT /api/me/bookmarks/{guideId}", login(bookmarkHandler.Add))
+	mux.HandleFunc("DELETE /api/me/bookmarks/{guideId}", login(bookmarkHandler.Remove))
+	mux.HandleFunc("GET /api/me/friendships", login(friendshipHandler.List))
+	mux.HandleFunc("PUT /api/me/friendships/{npcId}", login(friendshipHandler.Put))
+	mux.HandleFunc("DELETE /api/me/friendships/{npcId}", login(friendshipHandler.Delete))
 
 	// 🛡️ Admin
 	mux.HandleFunc("GET /api/admin/members", admin(adminHandler.ListMembers))
