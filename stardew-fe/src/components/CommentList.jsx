@@ -23,7 +23,7 @@ function CommentList({ comments, canDelete, onDelete }) {
   return (
     <ul className="space-y-3">
       {comments.map(c => (
-        <li key={c.id} className="wood-card p-4">
+        <li key={c.id} className="rounded-xl border border-slate-200 bg-white p-4">
           <div className="flex items-center gap-2 text-sm">
             <Avatar member={c.member} />
             <span className="font-medium text-slate-800">{c.member.displayName}</span>
