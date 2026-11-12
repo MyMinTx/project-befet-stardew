@@ -120,13 +120,13 @@ email มี `@` และ ≤ 255 · password 8–72 ตัวอักษร �
 | 9 | GET | `/api/npcs/{id}` | 🌐 | – | 200 `Npc` + `"gifts": { love: [...], like: [...], neutral: [...], dislike: [...], hate: [...] }` (แต่ละตัว `{ itemId, name, imageUrl }`) · 404 |
 | 10 | GET | `/api/guides` | 🌐 | `q`, `category` | 200 `{ items: GuideSummary[] }` (เฉพาะ `published = true`) |
 | 11 | GET | `/api/guides/{id}` | 🌐 | – | 200 `Guide` · 404 (รวมถึงกรณียังไม่ published) |
-| 12 | GET | `/api/guides/{id}/comments` | 🌐 | – | 200 `{ items: Comment[] }` เรียงใหม่สุดก่อน |
+| 12 | GET | `/api/guides/{id}/comments` | 🌐 | – | 200 `{ items: Comment[] }` เรียงใหม่สุดก่อน · 404 (ไม่มีไกด์/ยังไม่ published) |
 
 ### 4.3 ฟังก์ชันสมาชิก
 
 | # | Method | Path | สิทธิ์ | Body | ตอบกลับ |
 |---|---|---|---|---|---|
-| 13 | POST | `/api/guides/{id}/comments` | 👤 | `{ text }` (≥ 10 ตัวอักษร) | 201 `Comment` · 400 `TEXT_TOO_SHORT` · 404 |
+| 13 | POST | `/api/guides/{id}/comments` | 👤 | `{ text }` (10–2000 ตัวอักษร) | 201 `Comment` · 400 `TEXT_TOO_SHORT` / `BAD_FIELD` · 404 |
 | 14 | DELETE | `/api/comments/{commentId}` | 👤 | – | 204 · 403 (ไม่ใช่เจ้าของ และไม่ใช่ admin) · 404 |
 | 15 | GET | `/api/me/bookmarks` | 👤 | – | 200 `{ items: GuideSummary[] }` |
 | 16 | PUT | `/api/me/bookmarks/{guideId}` | 👤 | – | 204 (กดซ้ำไม่ error) · 404 |
@@ -148,12 +148,12 @@ email มี `@` และ ≤ 255 · password 8–72 ตัวอักษร �
 | 27 | POST | `/api/admin/npcs` | Npc (ไม่มี id) | 201 `Npc` |
 | 28 | PUT | `/api/admin/npcs/{id}` | Npc (ไม่มี id) | 200 `Npc` · 404 |
 | 29 | DELETE | `/api/admin/npcs/{id}` | – | 204 · 404 |
-| 30 | PUT | `/api/admin/npcs/{id}/gifts` | `{ gifts: [{ itemId, preference }] }` (แทนที่ทั้งชุด) | 204 · 400 |
+| 30 | PUT | `/api/admin/npcs/{id}/gifts` | `{ gifts: [{ itemId, preference }] }` (แทนที่ทั้งชุด) | 204 · 400 (itemId ไม่มีจริง/ซ้ำ) · 404 |
 | 31 | GET | `/api/admin/guides` | – | 200 `{ items: GuideSummary[] }` (รวมที่ยังไม่ published) |
-| 31b | GET | `/api/admin/guides/{id}` | – | 200 `Guide` (รวมที่ยังไม่ published ใช้โหลดเข้าฟอร์มแก้ไข) · 404 |
 | 32 | POST | `/api/admin/guides` | `{ title, category, summary, coverUrl, content, published }` | 201 `Guide` |
 | 33 | PUT | `/api/admin/guides/{id}` | เหมือนข้อ 32 | 200 `Guide` · 404 |
 | 34 | DELETE | `/api/admin/guides/{id}` | – | 204 · 404 |
+| 35 | GET | `/api/admin/guides/{id}` | – | 200 `Guide` (รวมที่ยังไม่ published ใช้โหลดเข้าฟอร์มแก้ไข) · 404 |
 
 ---
 
@@ -263,7 +263,7 @@ COMMIT;
 | Render (Go) | `DATABASE_URL` | connection string แบบ **Session pooler** ของ Supabase (Render ต่อ IPv6 ตรงไม่ได้) |
 | Render (Go) | `JWT_SECRET` | สุ่มยาว ≥ 32 ตัวอักษร |
 | Render (Go) | `ALLOWED_ORIGINS` | `http://localhost:3000,https://stardew-guide.vercel.app` |
-| Render (Go) | `PORT` | Render ตั้งให้เอง — Go ต้องอ่าน `os.Getenv("PORT")` (ถ้าว่างใช้ 8080) |
+| Render (Go) | `ALLOWED_ORIGINS` | `https://stardew-guide-psi.vercel.app` |
 | Vercel (React) | `REACT_APP_API_URL` | `https://stardew-guide-api.onrender.com` |
 
 ห้าม commit `.env` / secret ลง GitHub
@@ -274,6 +274,8 @@ COMMIT;
 
 | วันที่ | ใครแก้ | แก้อะไร | อีกฝ่ายรับทราบ |
 |---|---|---|---|
-| 2026-11-12 | Metha (A) | เพิ่ม `GET /api/health` (ข้อ 4.0) | |
-| 2026-11-13 | Metha (A) | ข้อ 12: ไกด์ไม่มี/ยังไม่ published ตอบ 404 · ข้อ 13: คอมเมนต์ยาวได้ไม่เกิน 2000 ตัวอักษร (เกินตอบ 400 `BAD_FIELD`) | |
-| 2026-11-13 | Metha (A) | เพิ่ม 31b `GET /api/admin/guides/{id}` · ข้อ 24/27 ชื่อซ้ำตอบ 409 `DUPLICATE` · ข้อ 30 ไม่มี NPC ตอบ 404, itemId ไม่มีจริงตอบ 400 | |
+| 2026-11-12 | Metha (A) | เพิ่ม `GET /api/health` (ข้อ 4.0) ใช้เช็ก/ปลุก server บน Render | Misa (B) |
+| 2026-11-13 | Metha (A) | ข้อ 12: ไกด์ไม่มีหรือยังไม่ published ตอบ 404 · ข้อ 13: คอมเมนต์ยาวได้ไม่เกิน 2000 ตัวอักษร (เกินตอบ 400 `BAD_FIELD`) | Misa (B) |
+| 2026-11-13 | Metha (A) | เพิ่มข้อ 35 `GET /api/admin/guides/{id}` · ข้อ 24/27 ชื่อซ้ำตอบ 409 `DUPLICATE` · ข้อ 30 ไม่มี NPC ตอบ 404, itemId ไม่มีจริงหรือซ้ำตอบ 400 | Misa (B) |
+| 2026-11-13 | Metha (A) | Deploy Render แล้ว `https://stardew-guide-api.onrender.com` · `/api/health` ตอบ `version` เพิ่ม | Misa (B) |
+| 2026-11-13 | Metha (A) | เพิ่มโดเมน Vercel ใน `ALLOWED_ORIGINS` (ข้อ 6) | Misa (B) |
