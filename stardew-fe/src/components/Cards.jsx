@@ -10,7 +10,7 @@ export const itemEmoji = {
 };
 
 const cardClass =
-  'flex gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-emerald-300 hover:shadow-sm';
+  'flex gap-3 wood-card wood-card-hover p-4';
 
 export function ItemCard({ item }) {
   return (
