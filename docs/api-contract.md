@@ -150,6 +150,7 @@ email มี `@` และ ≤ 255 · password 8–72 ตัวอักษร �
 | 29 | DELETE | `/api/admin/npcs/{id}` | – | 204 · 404 |
 | 30 | PUT | `/api/admin/npcs/{id}/gifts` | `{ gifts: [{ itemId, preference }] }` (แทนที่ทั้งชุด) | 204 · 400 |
 | 31 | GET | `/api/admin/guides` | – | 200 `{ items: GuideSummary[] }` (รวมที่ยังไม่ published) |
+| 31b | GET | `/api/admin/guides/{id}` | – | 200 `Guide` (รวมที่ยังไม่ published ใช้โหลดเข้าฟอร์มแก้ไข) · 404 |
 | 32 | POST | `/api/admin/guides` | `{ title, category, summary, coverUrl, content, published }` | 201 `Guide` |
 | 33 | PUT | `/api/admin/guides/{id}` | เหมือนข้อ 32 | 200 `Guide` · 404 |
 | 34 | DELETE | `/api/admin/guides/{id}` | – | 204 · 404 |
@@ -275,3 +276,4 @@ COMMIT;
 |---|---|---|---|
 | 2026-11-12 | Metha (A) | เพิ่ม `GET /api/health` (ข้อ 4.0) | |
 | 2026-11-13 | Metha (A) | ข้อ 12: ไกด์ไม่มี/ยังไม่ published ตอบ 404 · ข้อ 13: คอมเมนต์ยาวได้ไม่เกิน 2000 ตัวอักษร (เกินตอบ 400 `BAD_FIELD`) | |
+| 2026-11-13 | Metha (A) | เพิ่ม 31b `GET /api/admin/guides/{id}` · ข้อ 24/27 ชื่อซ้ำตอบ 409 `DUPLICATE` · ข้อ 30 ไม่มี NPC ตอบ 404, itemId ไม่มีจริงตอบ 400 | |
