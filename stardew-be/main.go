@@ -38,12 +38,18 @@ func main() {
 	memberRepo := &repository.MemberRepo{DB: pool}
 	authHandler := &handlers.AuthHandler{Members: memberRepo, Tokens: tokens}
 	meHandler := &handlers.MeHandler{Members: memberRepo}
-	adminHandler := &handlers.AdminHandler{Members: memberRepo}
 	guideRepo := &repository.GuideRepo{DB: pool}
 	commentRepo := &repository.CommentRepo{DB: pool}
 	guideHandler := &handlers.GuideHandler{Guides: guideRepo, Comments: commentRepo}
 	bookmarkHandler := &handlers.BookmarkHandler{Bookmarks: &repository.BookmarkRepo{DB: pool}, Guides: guideRepo}
 	friendshipHandler := &handlers.FriendshipHandler{Friendships: &repository.FriendshipRepo{DB: pool}}
+	adminHandler := &handlers.AdminHandler{
+		Members: memberRepo,
+		Stats:   &repository.StatsRepo{DB: pool},
+		Items:   itemRepo,
+		Npcs:    npcRepo,
+		Guides:  guideRepo,
+	}
 
 	// ตัวช่วยครอบสิทธิ์: login = ต้องเข้าสู่ระบบ, admin = ต้องเข้าสู่ระบบ + role admin
 	auth := &middleware.Auth{Tokens: tokens}
@@ -57,7 +63,7 @@ func main() {
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 	})
-		mux.HandleFunc("GET /api/items", itemHandler.List)
+	mux.HandleFunc("GET /api/items", itemHandler.List)
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 	mux.HandleFunc("GET /api/npcs", npcHandler.List)
 	mux.HandleFunc("GET /api/npcs/{id}", npcHandler.Get)
@@ -81,7 +87,21 @@ func main() {
 	mux.HandleFunc("DELETE /api/me/friendships/{npcId}", login(friendshipHandler.Delete))
 
 	// 🛡️ Admin
+	mux.HandleFunc("GET /api/admin/stats", admin(adminHandler.GetStats))
 	mux.HandleFunc("GET /api/admin/members", admin(adminHandler.ListMembers))
+	mux.HandleFunc("PUT /api/admin/members/{id}/role", admin(adminHandler.UpdateRole))
+	mux.HandleFunc("POST /api/admin/items", admin(adminHandler.CreateItem))
+	mux.HandleFunc("PUT /api/admin/items/{id}", admin(adminHandler.UpdateItem))
+	mux.HandleFunc("DELETE /api/admin/items/{id}", admin(adminHandler.DeleteItem))
+	mux.HandleFunc("POST /api/admin/npcs", admin(adminHandler.CreateNpc))
+	mux.HandleFunc("PUT /api/admin/npcs/{id}", admin(adminHandler.UpdateNpc))
+	mux.HandleFunc("DELETE /api/admin/npcs/{id}", admin(adminHandler.DeleteNpc))
+	mux.HandleFunc("PUT /api/admin/npcs/{id}/gifts", admin(adminHandler.ReplaceGifts))
+	mux.HandleFunc("GET /api/admin/guides", admin(adminHandler.ListGuides))
+	mux.HandleFunc("GET /api/admin/guides/{id}", admin(adminHandler.GetGuide))
+	mux.HandleFunc("POST /api/admin/guides", admin(adminHandler.CreateGuide))
+	mux.HandleFunc("PUT /api/admin/guides/{id}", admin(adminHandler.UpdateGuide))
+	mux.HandleFunc("DELETE /api/admin/guides/{id}", admin(adminHandler.DeleteGuide))
 
 	// 5) ครอบ mux ด้วย middleware ที่ใช้กับทุก request: Logger นอกสุด → CORS → mux
 	origins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
