@@ -4,7 +4,6 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
 import RequireRole from './components/RequireRole';
-import Placeholder from './components/Placeholder';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -18,6 +17,13 @@ import GuideDetail from './pages/GuideDetail';
 import Profile from './pages/Profile';
 import Bookmarks from './pages/Bookmarks';
 import Friendships from './pages/Friendships';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminMembers from './pages/admin/AdminMembers';
+import { AdminItems, AdminNpcs, AdminGuides } from './pages/admin/AdminLists';
+import AdminItemForm from './pages/admin/AdminItemForm';
+import AdminNpcForm from './pages/admin/AdminNpcForm';
+import AdminGuideForm from './pages/admin/AdminGuideForm';
 
 // รูปพื้นหลัง: วางไฟล์ไว้ที่ public/bg.jpg (เปลี่ยนชื่อไฟล์ได้ที่นี่) — ถ้าไม่มีไฟล์ จะเห็นสีไล่ระดับด้านหลังแทน
 const BACKGROUND_IMAGE = `${process.env.PUBLIC_URL}/bg.jpg`;
@@ -51,7 +57,19 @@ function App() {
             <Route path="/me/friendships" element={<ProtectedRoute><Friendships /></ProtectedRoute>} />
 
             {/* 🛡️ Admin: ครอบทั้งกิ่งด้วย RequireRole ครั้งเดียว หน้าลูกทุกหน้าได้รับการป้องกัน */}
-            <Route path="/admin" element={<RequireRole role="admin"><Placeholder title="หลังบ้าน" /></RequireRole>} />
+                        <Route path="/admin" element={<RequireRole role="admin"><AdminLayout /></RequireRole>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="members" element={<AdminMembers />} />
+              <Route path="items" element={<AdminItems />} />
+              <Route path="items/new" element={<AdminItemForm />} />
+              <Route path="items/:id" element={<AdminItemForm />} />
+              <Route path="npcs" element={<AdminNpcs />} />
+              <Route path="npcs/new" element={<AdminNpcForm />} />
+              <Route path="npcs/:id" element={<AdminNpcForm />} />
+              <Route path="guides" element={<AdminGuides />} />
+              <Route path="guides/new" element={<AdminGuideForm />} />
+              <Route path="guides/:id" element={<AdminGuideForm />} />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
           </Routes>
