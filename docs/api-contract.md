@@ -91,6 +91,12 @@ Frontend เก็บ label ภาษาไทยเองใน `src/data/label
 
 ช่อง "สิทธิ์": 🌐 Guest (ไม่ต้อง login) · 👤 Member (ต้อง login) · 🛡️ Admin (role = admin)
 
+### 4.0 ระบบ
+
+| # | Method | Path | สิทธิ์ | Body | ตอบกลับ |
+|---|---|---|---|---|---|
+| 0 | GET | `/api/health` | 🌐 | – | 200 `{ "status": "ok" }` (ใช้เช็กว่า server ทำงาน/ปลุก Render) |
+
 ### 4.1 สมาชิก (Auth / Profile)
 
 | # | Method | Path | สิทธิ์ | Body | ตอบกลับ |
@@ -267,4 +273,4 @@ COMMIT;
 
 | วันที่ | ใครแก้ | แก้อะไร | อีกฝ่ายรับทราบ |
 |---|---|---|---|
-| | | | |
+| 2026-11-12 | Metha (A) | เพิ่ม `GET /api/health` (ข้อ 4.0) | |
