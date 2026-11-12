@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getNpc } from '../api/backend';
+import { getFriendships, getNpc, putFriendship } from '../api/backend';
+import { useAuth } from '../auth/AuthContext';
 import { preferenceColors, preferenceLabels } from '../data/labels';
 import { formatBirthday } from '../utils/format';
+import HeartTracker from '../components/HeartTracker';
 import ImageBox from '../components/ImageBox';
 import { Empty, ErrorBox, Loading } from '../components/States';
 
 // หน้ารายละเอียดชาวเมือง: GET /api/npcs/{id}  (#9) ได้ Npc + gifts แยกตาม preference
+// 👤 สมาชิก: ตัวติดตามหัวใจ GET /api/me/friendships (#18) + PUT /api/me/friendships/{npcId} (#19)
 function NpcDetail() {
   const { id } = useParams();
   const [npc, setNpc] = useState(null);
   const [status, setStatus] = useState('loading');
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  const { isLoggedIn, token } = useAuth();
+  const [hearts, setHearts] = useState(null);                 // null = ยังโหลดไม่เสร็จ
 
   useEffect(() => {
     let ignore = false;
@@ -28,6 +34,16 @@ function NpcDetail() {
     load();
     return () => { ignore = true; };
   }, [id, reloadKey]);
+
+  // สมาชิก: หาว่าเราบันทึกหัวใจกับ NPC คนนี้ไว้กี่ดวง (ยังไม่เคยบันทึก = 0)
+  useEffect(() => {
+    if (!token) { setHearts(null); return; }
+    let ignore = false;
+    getFriendships(token)
+      .then(list => { if (!ignore) setHearts(list.find(f => f.npcId === Number(id))?.hearts ?? 0); })
+      .catch(() => { if (!ignore) setHearts(0); });
+    return () => { ignore = true; };
+  }, [id, token]);
 
   // gifts = { love: [...], like: [...], ... } → มีของขวัญรวมกี่ชิ้น
   const giftCount = npc ? Object.values(npc.gifts).reduce((sum, list) => sum + list.length, 0) : 0;
@@ -60,7 +76,21 @@ function NpcDetail() {
               </div>
             </section>
 
-            {/* ขั้นถัดไป: ตัวติดตามหัวใจ (เฉพาะสมาชิก) จะวางตรงนี้ */}
+            <section className="mt-6 rounded-2xl border border-pink-100 bg-pink-50/50 p-5">
+              <h2 className="mb-3 text-lg font-semibold text-slate-900">ความสัมพันธ์ของฉันกับ {npc.name}</h2>
+              {!isLoggedIn && (
+                <p className="text-sm text-slate-600">
+                  <Link to="/login" state={{ from: `/npcs/${id}` }} className="font-medium text-emerald-700 underline">เข้าสู่ระบบ</Link>
+                  {' '}เพื่อบันทึกจำนวนหัวใจของคุณ
+                </p>
+              )}
+              {isLoggedIn && hearts === null && <p className="text-sm text-slate-400">กำลังโหลด...</p>}
+              {/* key={hearts...} ทำให้ HeartTracker เริ่มใหม่ด้วยค่าที่โหลดมา */}
+              {isLoggedIn && hearts !== null && (
+                <HeartTracker key={`${id}-${hearts}`} initial={hearts} max={npc.marriageable ? 14 : 10}
+                              onSave={(h) => putFriendship(id, h, token)} />
+              )}
+            </section>
 
             <section className="mt-6">
               <h2 className="mb-3 text-lg font-semibold text-slate-900">ของขวัญ</h2>

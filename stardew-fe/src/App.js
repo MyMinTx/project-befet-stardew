@@ -15,6 +15,9 @@ import Npcs from './pages/Npcs';
 import NpcDetail from './pages/NpcDetail';
 import Guides from './pages/Guides';
 import GuideDetail from './pages/GuideDetail';
+import Profile from './pages/Profile';
+import Bookmarks from './pages/Bookmarks';
+import Friendships from './pages/Friendships';
 
 // แผนที่เส้นทางทั้งเว็บ — Placeholder คือหน้าที่ยังไม่ได้ทำ ทำเสร็จแล้วค่อยเปลี่ยนเป็นหน้าจริง
 function App() {
@@ -37,9 +40,9 @@ function App() {
             <Route path="/register" element={<Register />} />
 
             {/* 👤 Member: ต้อง login */}
-            <Route path="/me" element={<ProtectedRoute><Placeholder title="โปรไฟล์ของฉัน" /></ProtectedRoute>} />
-            <Route path="/me/bookmarks" element={<ProtectedRoute><Placeholder title="ไกด์ที่บุ๊กมาร์ก" /></ProtectedRoute>} />
-            <Route path="/me/friendships" element={<ProtectedRoute><Placeholder title="หัวใจชาวเมือง" /></ProtectedRoute>} />
+            <Route path="/me" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/me/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
+            <Route path="/me/friendships" element={<ProtectedRoute><Friendships /></ProtectedRoute>} />
 
             {/* 🛡️ Admin: ครอบทั้งกิ่งด้วย RequireRole ครั้งเดียว หน้าลูกทุกหน้าได้รับการป้องกัน */}
             <Route path="/admin" element={<RequireRole role="admin"><Placeholder title="หลังบ้าน" /></RequireRole>} />
