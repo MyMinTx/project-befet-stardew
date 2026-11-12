@@ -162,3 +162,8 @@ push ขึ้น branch `main` แล้ว Render จะ build และ deplo
 ---
 
 ข้อมูลเกมอ้างอิงจาก [stardewvalleywiki.com](https://stardewvalleywiki.com) (คำอธิบายภาษาไทยเขียนใหม่โดยทีม) · Stardew Valley © ConcernedApe
+
+## Test
+
+    go test ./...        # ไม่ต้องต่อ DB
+    go test -v ./security/ ./middleware/
