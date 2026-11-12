@@ -59,7 +59,6 @@ func (r *MemberRepo) FindByID(ctx context.Context, id int64) (models.Member, err
 	return m, err
 }
 
-
 // UpdateProfile แก้ชื่อที่แสดงและรูปโปรไฟล์ แล้วคืนข้อมูลล่าสุด
 func (r *MemberRepo) UpdateProfile(ctx context.Context, id int64, displayName string, avatarURL *string) (models.Member, error) {
 	row := r.DB.QueryRow(ctx, `
