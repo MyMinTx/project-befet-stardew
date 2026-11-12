@@ -9,6 +9,12 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import NotFound from './pages/NotFound';
+import Items from './pages/Items';
+import ItemDetail from './pages/ItemDetail';
+import Npcs from './pages/Npcs';
+import NpcDetail from './pages/NpcDetail';
+import Guides from './pages/Guides';
+import GuideDetail from './pages/GuideDetail';
 
 // แผนที่เส้นทางทั้งเว็บ — Placeholder คือหน้าที่ยังไม่ได้ทำ ทำเสร็จแล้วค่อยเปลี่ยนเป็นหน้าจริง
 function App() {
@@ -21,12 +27,12 @@ function App() {
           <Routes>
             {/* 🌐 Guest */}
             <Route path="/" element={<Home />} />
-            <Route path="/items" element={<Placeholder title="ไอเทม" />} />
-            <Route path="/items/:id" element={<Placeholder title="รายละเอียดไอเทม" />} />
-            <Route path="/npcs" element={<Placeholder title="ชาวเมือง" />} />
-            <Route path="/npcs/:id" element={<Placeholder title="รายละเอียดชาวเมือง" />} />
-            <Route path="/guides" element={<Placeholder title="ไกด์" />} />
-            <Route path="/guides/:id" element={<Placeholder title="อ่านไกด์" />} />
+            <Route path="/items" element={<Items />} />
+            <Route path="/items/:id" element={<ItemDetail />} />
+            <Route path="/npcs" element={<Npcs />} />
+            <Route path="/npcs/:id" element={<NpcDetail />} />
+            <Route path="/guides" element={<Guides />} />
+            <Route path="/guides/:id" element={<GuideDetail />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
