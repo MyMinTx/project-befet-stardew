@@ -1,0 +1,34 @@
+{
+  "items": [
+    { "id": 1, "name": "Parsnip", "category": "crop", "description": "พืชผลแรกที่มือใหม่ได้ปลูก โตเร็วภายใน 4 วัน", "imageUrl": null, "sellPrice": 35, "seasons": ["spring"], "source": "ปลูกจากเมล็ดที่ร้าน Pierre" },
+    { "id": 2, "name": "Cauliflower", "category": "crop", "description": "ใช้เวลาโต 12 วัน มีโอกาสกลายเป็นพืชยักษ์", "imageUrl": null, "sellPrice": 175, "seasons": ["spring"], "source": "ปลูกจากเมล็ดที่ร้าน Pierre" },
+    { "id": 3, "name": "Blueberry", "category": "crop", "description": "เก็บได้หลายรอบ เหมาะสำหรับหาเงินช่วงฤดูร้อน", "imageUrl": null, "sellPrice": 50, "seasons": ["summer"], "source": "ปลูกจากเมล็ดที่ร้าน Pierre" },
+    { "id": 4, "name": "Pumpkin", "category": "crop", "description": "พืชผลฤดูใบไม้ร่วง ใช้ทำของขวัญและเข้าศูนย์ชุมชน", "imageUrl": null, "sellPrice": 320, "seasons": ["fall"], "source": "ปลูกจากเมล็ดที่ร้าน Pierre" },
+    { "id": 5, "name": "Amethyst", "category": "mineral", "description": "อัญมณีสีม่วง พบในเหมืองชั้นต้น ๆ", "imageUrl": null, "sellPrice": 100, "seasons": [], "source": "ขุดในเหมือง" },
+    { "id": 6, "name": "Sardine", "category": "fish", "description": "ปลาทะเลที่จับง่าย", "imageUrl": null, "sellPrice": 40, "seasons": ["spring", "fall", "winter"], "source": "ตกที่ทะเล ตอนกลางวัน" },
+    { "id": 7, "name": "Leek", "category": "forage", "description": "ของป่าที่หาได้ทั่วไปในฤดูใบไม้ผลิ", "imageUrl": null, "sellPrice": 60, "seasons": ["spring"], "source": "เก็บตามพื้นดิน" },
+    { "id": 8, "name": "Pumpkin Soup", "category": "cooking", "description": "ซุปฟักทองหอมอร่อย", "imageUrl": null, "sellPrice": 300, "seasons": [], "source": "ทำอาหารจากสูตรของ Robin" }
+  ],
+  "npcs": [
+    { "id": 1, "name": "Abigail", "birthdaySeason": "fall", "birthdayDay": 13, "location": "Pierre's General Store", "marriageable": true, "description": "สาวรักการผจญภัย ชอบเล่นเกมและสำรวจเหมือง", "imageUrl": null },
+    { "id": 2, "name": "Sebastian", "birthdaySeason": "winter", "birthdayDay": 10, "location": "บ้านของ Robin", "marriageable": true, "description": "โปรแกรมเมอร์ขี้เหงา ชอบอยู่ในห้องใต้ดิน", "imageUrl": null },
+    { "id": 3, "name": "Pierre", "birthdaySeason": "spring", "birthdayDay": 26, "location": "Pierre's General Store", "marriageable": false, "description": "เจ้าของร้านขายของชำประจำเมือง", "imageUrl": null },
+    { "id": 4, "name": "Linus", "birthdaySeason": "winter", "birthdayDay": 3, "location": "เต็นท์บนภูเขา", "marriageable": false, "description": "ชายผู้ใช้ชีวิตเรียบง่ายกลางธรรมชาติ", "imageUrl": null }
+  ],
+  "gifts": [
+    { "npcId": 1, "itemId": 4, "preference": "love" },
+    { "npcId": 1, "itemId": 5, "preference": "love" },
+    { "npcId": 1, "itemId": 3, "preference": "like" },
+    { "npcId": 1, "itemId": 2, "preference": "hate" },
+    { "npcId": 2, "itemId": 8, "preference": "love" },
+    { "npcId": 2, "itemId": 5, "preference": "like" },
+    { "npcId": 2, "itemId": 1, "preference": "dislike" },
+    { "npcId": 4, "itemId": 7, "preference": "love" },
+    { "npcId": 4, "itemId": 6, "preference": "like" }
+  ],
+  "guides": [
+    { "id": 1, "title": "วันแรกในฟาร์ม", "category": "beginner", "summary": "สิ่งที่ควรทำใน 7 วันแรก", "coverUrl": null, "published": true, "content": "วันแรก: เคลียร์พื้นที่แล้วปลูก Parsnip 15 เมล็ดที่ได้มา\nวันที่ 2: แวะไปคุยกับชาวเมืองทุกคน\nวันที่ 5: เหมืองเปิดแล้ว ลองลงไปขุดแร่" },
+    { "id": 2, "title": "หาเงินฤดูร้อนด้วย Blueberry", "category": "money", "summary": "ปลูกครั้งเดียว เก็บได้ทั้งฤดู", "coverUrl": null, "published": true, "content": "ซื้อเมล็ด Blueberry ตั้งแต่วันแรกของฤดูร้อน\nรดน้ำทุกวัน หรือทำ Sprinkler ไว้ช่วย\nจะเก็บได้ทุก 4 วันหลังจากเก็บครั้งแรก" },
+    { "id": 3, "title": "ศูนย์ชุมชน: ห้องลูกเรือ", "category": "community-center", "summary": "ฉบับร่าง ยังไม่เผยแพร่", "coverUrl": null, "published": false, "content": "กำลังเขียน..." }
+  ]
+}
