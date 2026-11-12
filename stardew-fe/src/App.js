@@ -19,12 +19,18 @@ import Profile from './pages/Profile';
 import Bookmarks from './pages/Bookmarks';
 import Friendships from './pages/Friendships';
 
+// รูปพื้นหลัง: วางไฟล์ไว้ที่ public/bg.jpg (เปลี่ยนชื่อไฟล์ได้ที่นี่) — ถ้าไม่มีไฟล์ จะเห็นสีไล่ระดับด้านหลังแทน
+const BACKGROUND_IMAGE = `${process.env.PUBLIC_URL}/bg.jpg`;
+const siteBackground = {
+  backgroundImage: `url(${BACKGROUND_IMAGE}), linear-gradient(180deg, #bfe0f2 0%, #d9ecc2 55%, #b8d58f 100%)`,
+};
+
 // แผนที่เส้นทางทั้งเว็บ — Placeholder คือหน้าที่ยังไม่ได้ทำ ทำเสร็จแล้วค่อยเปลี่ยนเป็นหน้าจริง
 function App() {
   return (
     // AuthProvider ครอบทั้งแอป ทุกหน้าข้างในจึงเรียก useAuth() ได้
     <AuthProvider>
-      <div className="flex min-h-screen flex-col bg-slate-50">
+      <div className="site-bg flex min-h-screen flex-col" style={siteBackground}>
         <Navbar />
         <main className="flex-1">
           <Routes>

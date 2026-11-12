@@ -1,4 +1,366 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Press+Start+2P&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===================== ธีมฟาร์มไม้ =====================
+   เปลี่ยนสีทั้งเว็บได้ที่ตัวแปรชุดนี้ที่เดียว */
+:root {
+  --wood-frame: #8b5a2b;        /* สีกรอบไม้เข้ม */
+  --wood-frame-light: #c48a4f;  /* เส้นไฮไลต์ด้านในกรอบ */
+  --wood-shadow: #5e3a17;       /* เงาใต้กรอบ */
+  --wood-panel: #f6e7c8;        /* พื้นไม้อ่อนในการ์ด */
+  --wood-panel-2: #eed8ad;
+  --sheet: rgba(255, 249, 236, 0.82); /* แผ่นโปร่งหลังเนื้อหา ให้อ่านออกบนรูปพื้นหลัง */
+}
+
+@layer components {
+  /* พื้นหลังทั้งเว็บ (ตัวรูปใส่ใน App.js เพราะอยู่ในโฟลเดอร์ public/) ถ้ายังไม่มีรูป จะเห็นสีไล่ระดับแทน */
+  .site-bg {
+    background-color: #cfe3b4;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;   /* รูปอยู่กับที่ตอนเลื่อนหน้า */
+  }
+  @media (max-width: 768px) {
+    .site-bg { background-attachment: scroll; }   /* มือถือรองรับ fixed ไม่ดี */
+  }
+
+  /* ทุกหน้า (div แรกใน <main>) วางบนแผ่นโปร่ง เพื่อให้ตัวหนังสืออ่านออกบนรูป */
+  main > div {
+    background: var(--sheet);
+    backdrop-filter: blur(3px);
+    border-radius: 1.25rem;
+    margin-block: 1.5rem;
+  }
+  @media (max-width: 640px) {
+    main > div { border-radius: 0; margin-block: 0; }
+  }
+
+  /* การ์ดกรอบไม้: ขอบไม้เข้ม + เส้นไฮไลต์ด้านใน + พื้นไม้อ่อนมีลายเสี้ยนจาง ๆ */
+  .wood-card {
+    border: 4px solid var(--wood-frame);
+    border-radius: 14px;
+    background-color: var(--wood-panel);
+    background-image:
+      repeating-linear-gradient(90deg, rgba(139, 90, 43, 0.05) 0 2px, transparent 2px 11px),
+      repeating-linear-gradient(0deg, rgba(139, 90, 43, 0.035) 0 1px, transparent 1px 7px),
+      linear-gradient(180deg, var(--wood-panel) 0%, var(--wood-panel-2) 100%);
+    box-shadow:
+      inset 0 0 0 2px var(--wood-frame-light),
+      0 3px 0 var(--wood-shadow),
+      0 8px 16px rgba(60, 35, 10, 0.18);
+  }
+  /* การ์ดที่กดได้: ยกขึ้นเล็กน้อยตอนชี้ */
+  .wood-card-hover {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .wood-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 2px var(--wood-frame-light),
+      0 6px 0 var(--wood-shadow),
+      0 14px 22px rgba(60, 35, 10, 0.22);
+  }
+  .wood-card-hover:focus-visible {
+    outline: 3px solid #059669;
+    outline-offset: 2px;
+  }
+
+  /* ชิปเล็ก (ชื่อของขวัญ, ชื่อ NPC) */
+  .wood-chip {
+    border: 2px solid var(--wood-frame-light);
+    border-radius: 9999px;
+    background: #fbf3e2;
+    transition: border-color 0.15s ease;
+  }
+  .wood-chip:hover { border-color: var(--wood-frame); }
+
+  /* แถบ Navbar / Footer สีไม้อ่อน */
+  .wood-bar {
+    background: rgba(251, 243, 226, 0.95);
+    border-color: var(--wood-frame);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* ===================== ชุดแก้ตามรอบที่ 2 ===================== */
+@layer components {
+  /* บล็อกไม้: ใช้กับเมนูที่เลือกอยู่ ปุ่มค้นหา และหมวดที่เลือก */
+  .wood-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--wood-shadow);
+    border-radius: 8px;
+    color: #fff8e8;
+    font-weight: 500;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, #c58a4e 0%, #9a6331 55%, #8b5a2b 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 236, 200, 0.55), 0 3px 0 var(--wood-shadow);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+  }
+  .wood-btn:hover { filter: brightness(1.08); }
+  .wood-btn:active { transform: translateY(2px); box-shadow: inset 0 1px 0 rgba(255, 236, 200, 0.55), 0 1px 0 var(--wood-shadow); }
+  .wood-btn:disabled { filter: grayscale(0.6) brightness(0.9); cursor: not-allowed; }
+
+  /* แถบ Navbar สีเทาเข้ม */
+  .dark-bar {
+    background: #2f3337;
+    border-bottom: 4px solid #1f2225;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* กล่อง Hero หน้าแรก: ลอยขึ้นมาแบบมีมิติ + ใส่รูปพื้นหลังได้ (ตัวแปร --hero-img ตั้งใน Home.jsx) */
+  .hero-pop {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 260px;
+    border: 6px solid var(--wood-frame);
+    border-radius: 20px;
+    background-color: #9fcf7a;
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.25)),
+      var(--hero-img, none),
+      linear-gradient(180deg, #8fd0f0 0%, #bfe6a6 60%, #7fbf5a 100%);
+    background-size: cover;
+    background-position: center;
+    box-shadow:
+      inset 0 0 0 3px var(--wood-frame-light),
+      0 8px 0 var(--wood-shadow),
+      0 22px 40px rgba(40, 25, 8, 0.35);
+    transform: perspective(900px) rotateX(2deg);
+    animation: hero-pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  }
+  .hero-title {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: #fff8e8;
+    letter-spacing: 0.01em;
+    text-shadow: 0 3px 0 var(--wood-shadow), 0 6px 0 rgba(0, 0, 0, 0.25), 0 10px 22px rgba(0, 0, 0, 0.35);
+  }
+  @keyframes hero-pop-in {
+    from { opacity: 0; transform: perspective(900px) rotateX(2deg) scale(0.92) translateY(16px); }
+    to   { opacity: 1; transform: perspective(900px) rotateX(2deg) scale(1) translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-pop { animation: none; }
+  }
+
+  /* การ์ดกรอบไม้ที่มีรูปพื้นหลัง (ตัวแปร --card-img) — ไม่มีรูปก็ยังเป็นพื้นไม้ */
+  .wood-card-photo {
+    position: relative;
+    min-height: 170px;
+    overflow: hidden;
+    background-image:
+      linear-gradient(0deg, rgba(40, 22, 8, 0.78) 0%, rgba(40, 22, 8, 0.15) 65%),
+      var(--card-img, none),
+      linear-gradient(180deg, #b98552 0%, #8b5a2b 100%);
+    background-size: cover;
+    background-position: center;
+    color: #fff8e8;
+  }
+}
+
+/* ===================== ชุดแก้รอบที่ 3: กรอบไม้แบบพิกเซล =====================
+   คลาสชื่อเดิม (.wood-card ฯลฯ) ถูกแทนที่ด้วยสไตล์ใหม่ทั้งเว็บ
+   หลักการ: ใช้ box-shadow ที่ "ไม่เบลอ" ซ้อนกันหลายชั้น = ขอบหนาเหลี่ยมแบบพิกเซล
+   เส้นขอบนอกเลื่อนออกทีละด้าน (บน/ล่าง/ซ้าย/ขวา) ทำให้มุมเว้าเป็นขั้นบันไดแบบเกม */
+:root {
+  --px-outline: #3d1d08;      /* เส้นขอบดำนอกสุด */
+  --px-wood: #cd6d22;         /* ไม้สีส้ม */
+  --px-wood-light: #f3ad5b;   /* แสงด้านบน/ซ้ายของไม้ */
+  --px-wood-dark: #8a4413;    /* เงาด้านล่าง/ขวาของไม้ */
+  --px-inner: #4a2410;        /* เส้นเข้มด้านในกรอบ */
+  --px-panel: #fde0a6;        /* พื้นในการ์ด */
+  --px-panel-edge: #f2c47c;   /* ขอบพื้นด้านใน (เงาจาง) */
+
+  /* ชุดเงาของกรอบ (เก็บเป็นตัวแปร ใช้ซ้ำตอน hover) */
+  --px-frame:
+    0 -4px 0 0 var(--px-outline), 0 4px 0 0 var(--px-outline),
+    -4px 0 0 0 var(--px-outline), 4px 0 0 0 var(--px-outline),
+    inset 0 3px 0 0 var(--px-wood-light), inset 3px 0 0 0 var(--px-wood-light),
+    inset 0 -3px 0 0 var(--px-wood-dark), inset -3px 0 0 0 var(--px-wood-dark),
+    inset 0 0 0 8px var(--px-wood),
+    inset 0 0 0 11px var(--px-inner),
+    inset 0 0 0 14px var(--px-panel-edge);
+}
+
+@layer components {
+  .wood-card {
+    border: 0;
+    border-radius: 0;
+    background: var(--px-panel);
+    box-shadow: var(--px-frame), 0 10px 0 -2px rgba(40, 20, 5, 0.35);
+    padding: 1.25rem;                     /* ให้เนื้อหาไม่ทับกรอบหนา */
+  }
+  .wood-card.p-4, .wood-card.p-5, .wood-card.p-6 { padding: 1.4rem; }
+  .wood-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--px-frame), 0 13px 0 -2px rgba(40, 20, 5, 0.35);
+  }
+
+  /* การ์ดที่มีรูป: กรอบพิกเซลวาดทับรูป */
+  .wood-card-photo {
+    background-color: #a8612a;
+  }
+
+  /* การ์ดไกด์มีรูปปกด้านบน: เว้นขอบให้กรอบ */
+  .wood-card.overflow-hidden { overflow: visible; }
+
+  /* แผ่นหลังเนื้อหาทุกหน้า = แผงใหญ่แบบพิกเซล (คล้ายหน้าต่างเมนูในเกม) */
+  main > div {
+    border-radius: 0;
+    background: rgba(253, 224, 166, 0.9);
+    backdrop-filter: none;
+    box-shadow: var(--px-frame), 0 12px 0 -2px rgba(40, 20, 5, 0.3);
+    margin-block: 2rem;
+  }
+  @media (max-width: 640px) {
+    main > div { margin-block: 1rem; margin-inline: 0.5rem; }
+  }
+
+  /* ปุ่มบล็อกไม้แบบพิกเซล */
+  .wood-btn {
+    border: 0;
+    border-radius: 0;
+    background: var(--px-wood);
+    box-shadow:
+      0 -3px 0 0 var(--px-outline), 0 3px 0 0 var(--px-outline),
+      -3px 0 0 0 var(--px-outline), 3px 0 0 0 var(--px-outline),
+      inset 0 3px 0 0 var(--px-wood-light), inset 0 -3px 0 0 var(--px-wood-dark);
+    margin: 3px;
+  }
+  .wood-btn:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 -3px 0 0 var(--px-outline), 0 3px 0 0 var(--px-outline),
+      -3px 0 0 0 var(--px-outline), 3px 0 0 0 var(--px-outline),
+      inset 0 3px 0 0 var(--px-wood-dark);
+  }
+
+  /* ชิปเล็ก */
+  .wood-chip {
+    border: 0;
+    border-radius: 0;
+    background: #fff3d6;
+    box-shadow:
+      0 -2px 0 0 var(--px-wood-dark), 0 2px 0 0 var(--px-wood-dark),
+      -2px 0 0 0 var(--px-wood-dark), 2px 0 0 0 var(--px-wood-dark);
+    margin: 2px;
+  }
+  .wood-chip:hover { background: #ffe7b3; }
+
+  /* Hero หน้าแรก: กรอบพิกเซลหนาขึ้น ลอยขึ้นมา (ตัดการเอียงออก เพราะภาพพิกเซลเอียงแล้วเบลอ) */
+  .hero-pop {
+    border: 0;
+    border-radius: 0;
+    box-shadow: var(--px-frame), 0 14px 0 -2px rgba(40, 20, 5, 0.4);
+    transform: none;
+    animation-name: hero-pop-in-flat;
+  }
+  @keyframes hero-pop-in-flat {
+    from { opacity: 0; transform: scale(0.94) translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .hero-title {
+    text-shadow: 3px 3px 0 var(--px-outline), 6px 6px 0 rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* หน้าที่มีกรอบของตัวเองอยู่แล้ว (หน้าแรก / Login / Register) ใส่คลาส no-sheet ที่ div นอกสุด → ไม่ต้องมีแผงหลังซ้อนอีกชั้น */
+@layer components {
+  main > div.no-sheet {
+    background: transparent;
+    box-shadow: none;
+  }
+}
+
+/* ===================== ชุดแก้รอบที่ 4: การ์ดน้ำตาลเข้มโปร่งแสง (เก็บไว้ ตอนนี้ไม่ได้ใช้) ===================== */
+:root {
+  --px-dark-panel: rgba(66, 30, 12, 0.82);   /* น้ำตาลเข้มโปร่งแสง (เลขท้าย = ความทึบ) */
+  --px-frame-dark:
+    0 -4px 0 0 var(--px-outline), 0 4px 0 0 var(--px-outline),
+    -4px 0 0 0 var(--px-outline), 4px 0 0 0 var(--px-outline),
+    inset 0 3px 0 0 var(--px-wood-light), inset 3px 0 0 0 var(--px-wood-light),
+    inset 0 -3px 0 0 var(--px-wood-dark), inset -3px 0 0 0 var(--px-wood-dark),
+    inset 0 0 0 8px var(--px-wood),
+    inset 0 0 0 11px var(--px-inner);
+}
+
+@layer components {
+  .wood-card-dark {
+    background-color: transparent;
+    background-image:
+      linear-gradient(var(--px-dark-panel), var(--px-dark-panel)),
+      var(--card-img, none);
+    background-size: cover;
+    background-position: center;
+    box-shadow: var(--px-frame-dark), 0 10px 0 -2px rgba(20, 10, 3, 0.45);
+    color: #fdf0d5;
+    backdrop-filter: blur(2px);
+  }
+  .wood-card-dark.wood-card-hover:hover {
+    box-shadow: var(--px-frame-dark), 0 13px 0 -2px rgba(20, 10, 3, 0.45);
+  }
+
+  /* หัวเว็บตัวพิกเซล: STARDEW (เขียว) / GUIDE */
+  .pixel-title {
+    font-family: 'Press Start 2P', monospace;
+    line-height: 1.25;
+    letter-spacing: 0.04em;
+  }
+  .pixel-title-main {
+    display: block;
+    font-size: clamp(1.9rem, 6.5vw, 4.25rem);
+    color: #34b35a;
+    text-shadow: 4px 4px 0 #0f3d1c, 4px 0 0 #0f3d1c;
+  }
+  .pixel-title-sub {
+    display: block;
+    margin-top: 0.6rem;
+    font-size: clamp(1.4rem, 4.5vw, 3rem);
+    color: #fdebc8;
+    text-shadow: 4px 4px 0 #3d1d08;
+  }
+
+  /* ตัวหนังสือที่วางบนรูปพื้นหลังตรง ๆ (ไม่มีแผงรอง) ให้อ่านชัด */
+  .on-photo {
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.6);
+  }
+
+  /* เด้งขึ้นตอนเปิดหน้า */
+  .hero-pop-anim { animation: hero-pop-in-flat 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+  @media (prefers-reduced-motion: reduce) { .hero-pop-anim { animation: none; } }
+}
+
+/* ===================== ชุดแก้รอบที่ 5: การ์ดหน้าแรกพื้นครีม ===================== */
+:root {
+  --px-cream-panel: rgba(253, 224, 166, 0.93);   /* พื้นครีม (เลขท้าย = ความทึบ) */
+}
+@layer components {
+  /* การ์ดพื้นครีม + กรอบไม้พิกเซล (ใส่รูปผ่าน --card-img ได้ จะเห็นรูปจาง ๆ ใต้สีครีม) */
+  .wood-card-cream {
+    background-color: transparent;
+    background-image:
+      linear-gradient(var(--px-cream-panel), var(--px-cream-panel)),
+      var(--card-img, none);
+    background-size: cover;
+    background-position: center;
+    box-shadow: var(--px-frame), 0 10px 0 -2px rgba(40, 20, 5, 0.35);
+    color: #3d1d08;
+  }
+  .wood-card-cream.wood-card-hover:hover {
+    box-shadow: var(--px-frame), 0 13px 0 -2px rgba(40, 20, 5, 0.35);
+  }
+  /* GUIDE บนพื้นครีม → สีน้ำตาลเข้ม */
+  .wood-card-cream .pixel-title-sub {
+    color: #6b3410;
+    text-shadow: 4px 4px 0 rgba(61, 29, 8, 0.25);
+  }
+}

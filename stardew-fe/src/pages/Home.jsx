@@ -1,19 +1,20 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../auth/AuthContext';
 import { getGuides } from '../api/backend';
 import { GuideCard } from '../components/Cards';
 import { Empty, ErrorBox, Loading } from '../components/States';
 
+// รูปพื้นหลัง: วางไฟล์ไว้ในโฟลเดอร์ public/ ตามชื่อด้านล่าง (ไม่มีไฟล์ = ใช้สีพื้นแทน ไม่ error)
+const img = (file) => `url(${process.env.PUBLIC_URL}/${file})`;
+const HERO_IMAGE = img('hero.jpg');                            // public/hero.jpg
+
 const shortcuts = [
-  { to: '/items', emoji: '🥕', title: 'ไอเทม', text: 'ราคาขาย ฤดู และแหล่งที่มา' },
-  { to: '/npcs', emoji: '🧑‍🌾', title: 'ชาวเมือง', text: 'วันเกิดและของขวัญที่ชอบ' },
-  { to: '/guides', emoji: '📖', title: 'ไกด์', text: 'วิธีเล่นทีละขั้นสำหรับมือใหม่' },
+  { to: '/items', emoji: '🥕', title: 'ไอเทม', text: 'ราคาขาย ฤดู และแหล่งที่มา', image: img('cards/items.jpg') },
+  { to: '/npcs', emoji: '🧑‍🌾', title: 'ชาวเมือง', text: 'วันเกิดและของขวัญที่ชอบ', image: img('cards/npcs.jpg') },
+  { to: '/guides', emoji: '📖', title: 'ไกด์', text: 'วิธีเล่นทีละขั้นสำหรับมือใหม่', image: img('cards/guides.jpg') },
 ];
 
 function Home() {
-  const { isLoggedIn, member } = useAuth();
-
   // ไกด์ล่าสุด 3 เรื่อง (GET /api/guides)
   const [guides, setGuides] = useState([]);
   const [status, setStatus] = useState('loading');
@@ -38,33 +39,32 @@ function Home() {
   }, [reloadKey]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 md:px-6">
-      <section className="rounded-2xl bg-gradient-to-br from-emerald-50 to-amber-50 px-6 py-12 text-center">
-        <h1 className="text-3xl font-semibold text-emerald-800 md:text-4xl">Stardew Guide</h1>
-        <p className="mx-auto mt-3 max-w-xl text-slate-600">
-          คู่มือ Stardew Valley ภาษาไทย รวมไอเทม ชาวเมือง และไกด์สำหรับมือใหม่ไว้ในที่เดียว
-        </p>
-        <p className="mt-4 text-sm text-slate-500">
-          {isLoggedIn ? `ยินดีต้อนรับกลับมา ${member?.displayName} 👋`
-            : <><Link to="/register" className="text-emerald-700 hover:underline">สมัครสมาชิก</Link> เพื่อคอมเมนต์และบันทึกไกด์</>}
-        </p>
+    <div className="no-sheet mx-auto max-w-6xl px-4 py-10 md:px-6">
+      {/* Hero: การ์ดพื้นครีม + กรอบไม้ + ชื่อเว็บตัวพิกเซล (ใส่รูปได้ที่ public/hero.jpg) */}
+      <section className="wood-card wood-card-cream hero-pop-anim px-6 py-12 text-center sm:py-14"
+               style={{ '--card-img': HERO_IMAGE }}>
+        <h1 className="pixel-title">
+          <span className="pixel-title-main">STARDEW</span>
+          <span className="pixel-title-sub">GUIDE</span>
+        </h1>
       </section>
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-3">
+      {/* ทางลัด 3 การ์ด: กรอบไม้ + รูปพื้นหลังของแต่ละการ์ด (--card-img) */}
+      <section className="mt-10 grid gap-5 sm:grid-cols-3">
         {shortcuts.map((s) => (
-          <Link key={s.to} to={s.to}
-                className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-emerald-300 hover:shadow-sm">
+          <Link key={s.to} to={s.to} style={{ '--card-img': s.image }}
+                className="wood-card wood-card-hover wood-card-cream flex min-h-[150px] flex-col justify-end p-5">
             <p className="text-3xl">{s.emoji}</p>
-            <p className="mt-2 font-semibold text-slate-900">{s.title}</p>
-            <p className="text-sm text-slate-500">{s.text}</p>
+            <p className="mt-1 text-xl font-semibold">{s.title}</p>
+            <p className="text-sm text-amber-900/75">{s.text}</p>
           </Link>
         ))}
       </section>
 
       <section className="mt-10">
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-lg font-semibold text-slate-900">ไกด์ล่าสุด</h2>
-          <Link to="/guides" className="text-sm text-emerald-700 hover:underline">ดูทั้งหมด →</Link>
+          <h2 className="on-photo text-xl font-semibold">ไกด์ล่าสุด</h2>
+          <Link to="/guides" className="on-photo text-sm font-medium hover:underline">ดูทั้งหมด →</Link>
         </div>
         {status === 'loading' && <Loading />}
         {status === 'error' && <ErrorBox error={error} onRetry={() => setReloadKey(k => k + 1)} />}

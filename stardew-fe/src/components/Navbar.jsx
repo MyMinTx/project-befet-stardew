@@ -1,9 +1,10 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
+// เมนูที่เลือกอยู่ = บล็อกไม้ / เมนูอื่น = ตัวหนังสือสีอ่อนบนแถบเทาเข้ม
 const linkClass = ({ isActive }) =>
-  'rounded-full px-3 py-1.5 text-sm transition ' +
-  (isActive ? 'bg-emerald-600 text-white' : 'text-slate-600 hover:bg-emerald-50');
+  'px-3 py-1.5 text-sm ' +
+  (isActive ? 'wood-btn' : 'rounded-lg border-2 border-transparent text-slate-200 transition hover:bg-white/10');
 
 function Navbar() {
   const { isLoggedIn, isAdmin, member, logout } = useAuth();
@@ -15,9 +16,9 @@ function Navbar() {
   }
 
   return (
-    <header className="border-b border-emerald-100 bg-white/90 backdrop-blur">
+    <header className="dark-bar">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 md:px-6">
-        <Link to="/" className="mr-2 text-lg font-semibold text-emerald-700">🌱 Stardew Guide</Link>
+        <Link to="/" className="mr-2 text-lg font-semibold text-amber-200">🌱 Stardew Guide</Link>
 
         {/* เมนูที่ Guest ก็เห็น */}
         <nav className="flex flex-wrap gap-1">
@@ -34,7 +35,7 @@ function Navbar() {
               {isAdmin && <NavLink to="/admin" className={linkClass}>หลังบ้าน</NavLink>}
               <NavLink to="/me" end className={linkClass}>{member?.displayName}</NavLink>
               <button onClick={handleLogout}
-                      className="rounded-full px-3 py-1.5 text-sm text-slate-500 hover:bg-slate-100">
+                      className="rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:bg-white/10 hover:text-slate-200">
                 ออกจากระบบ
               </button>
             </>

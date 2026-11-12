@@ -4,7 +4,8 @@ import { getItems } from '../api/backend';
 import { itemCategoryLabels, seasonLabels } from '../data/labels';
 import { ItemCard } from '../components/Cards';
 import SearchBox from '../components/SearchBox';
-import { Empty, ErrorBox, Loading, btnGhost, inputClass } from '../components/States';
+import PageHeader from '../components/PageHeader';
+import { Empty, ErrorBox, Loading, btnGhost, smallInputClass } from '../components/States';
 
 // หน้ารายการไอเทม: GET /api/items?q=&category=&season=  (#6)
 function Items() {
@@ -44,26 +45,24 @@ function Items() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-      <h1 className="text-2xl font-semibold text-slate-900">ไอเทม</h1>
-      <p className="mb-6 text-sm text-slate-500">ค้นหาพืชผล ปลา แร่ และของอื่น ๆ พร้อมราคาขายและฤดูที่หาได้</p>
-
-      <div className="mb-6 flex flex-col gap-2 md:flex-row">
+      {/* หัวข้อตัวใหญ่ + ช่องค้นหาเล็ก ๆ ใต้หัวข้อ */}
+      <PageHeader title="ไอเทม" subtitle="ค้นหาพืชผล ปลา แร่ และของอื่น ๆ พร้อมราคาขายและฤดูที่หาได้">
         <SearchBox value={q} onSearch={(v) => updateParam('q', v)} placeholder="ค้นหาชื่อไอเทม เช่น Parsnip" />
         <select value={category} onChange={(e) => updateParam('category', e.target.value)}
-                aria-label="หมวดหมู่" className={inputClass + ' md:w-44'}>
+                aria-label="หมวดหมู่" className={smallInputClass}>
           <option value="">ทุกหมวด</option>
           {Object.entries(itemCategoryLabels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
           ))}
         </select>
         <select value={season} onChange={(e) => updateParam('season', e.target.value)}
-                aria-label="ฤดู" className={inputClass + ' md:w-44'}>
+                aria-label="ฤดู" className={smallInputClass}>
           <option value="">ทุกฤดู</option>
           {Object.entries(seasonLabels).map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
           ))}
         </select>
-      </div>
+      </PageHeader>
 
       {status === 'loading' && <Loading />}
       {status === 'error' && <ErrorBox error={error} onRetry={() => setReloadKey(k => k + 1)} />}

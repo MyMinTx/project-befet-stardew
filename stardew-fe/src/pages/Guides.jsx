@@ -4,11 +4,13 @@ import { getGuides } from '../api/backend';
 import { guideCategoryLabels } from '../data/labels';
 import { GuideCard } from '../components/Cards';
 import SearchBox from '../components/SearchBox';
+import PageHeader from '../components/PageHeader';
 import { Empty, ErrorBox, Loading, btnGhost } from '../components/States';
 
+// หมวดที่เลือกอยู่ = บล็อกไม้
 const chipClass = (active) =>
-  'rounded-full border px-3 py-1 text-sm transition ' +
-  (active ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-slate-300 bg-white text-slate-600 hover:bg-emerald-50');
+  'px-3 py-1 text-sm ' +
+  (active ? 'wood-btn' : 'wood-chip text-slate-700');
 
 // หน้ารายการไกด์: GET /api/guides?q=&category=  (#10) — Go ส่งมาเฉพาะที่ published แล้ว
 function Guides() {
@@ -46,12 +48,9 @@ function Guides() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
-      <h1 className="text-2xl font-semibold text-slate-900">ไกด์</h1>
-      <p className="mb-6 text-sm text-slate-500">วิธีเล่นทีละขั้น ตั้งแต่วันแรกในฟาร์มจนถึงศูนย์ชุมชน</p>
-
-      <div className="mb-3 flex">
+      <PageHeader title="ไกด์" subtitle="วิธีเล่นทีละขั้น ตั้งแต่วันแรกในฟาร์มจนถึงศูนย์ชุมชน">
         <SearchBox value={q} onSearch={(v) => updateParam('q', v)} placeholder="ค้นหาหัวข้อไกด์" />
-      </div>
+      </PageHeader>
       <div className="mb-6 flex flex-wrap gap-2" aria-label="หมวดหมู่">
         <button onClick={() => updateParam('category', '')} className={chipClass(!category)}>ทั้งหมด</button>
         {Object.entries(guideCategoryLabels).map(([value, label]) => (

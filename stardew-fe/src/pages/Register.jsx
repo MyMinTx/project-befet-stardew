@@ -36,40 +36,43 @@ function Register() {
   }
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-12">
-      <h1 className="text-2xl font-semibold text-slate-900">สมัครสมาชิก</h1>
-      <p className="mt-1 text-sm text-slate-500">สมาชิกคอมเมนต์ บุ๊กมาร์กไกด์ และติดตามหัวใจชาวเมืองได้</p>
+      <div className="no-sheet mx-auto max-w-md px-4 py-12">
+      {/* กรอบไม้ครอบทั้งฟอร์ม */}
+      <div className="wood-card p-6 sm:p-8">
+        <h1 className="text-2xl font-semibold text-slate-900">สมัครสมาชิก</h1>
+        <p className="mt-1 text-sm text-slate-500">สมาชิกคอมเมนต์ บุ๊กมาร์กไกด์ และติดตามหัวใจชาวเมืองได้</p>
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-3">
-        <label className="block">
-          <span className="text-sm text-slate-600">ชื่อที่แสดง</span>
-          <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={50}
-                 className={inputClass} />
-        </label>
-        <label className="block">
-          <span className="text-sm text-slate-600">อีเมล</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                 autoComplete="email" className={inputClass} />
-        </label>
-        <label className="block">
-          <span className="text-sm text-slate-600">รหัสผ่าน (8–72 ตัวอักษร)</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                 autoComplete="new-password" className={inputClass} />
-        </label>
-        <label className="block">
-          <span className="text-sm text-slate-600">ยืนยันรหัสผ่าน</span>
-          <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
-                 autoComplete="new-password" className={inputClass} />
-        </label>
-        {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
-        <button type="submit" disabled={status === 'submitting'} className={'w-full ' + btnPrimary}>
-          {status === 'submitting' ? 'กำลังสมัคร...' : 'สมัครสมาชิก'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-3">
+          <label className="block">
+            <span className="text-sm text-slate-600">ชื่อที่แสดง</span>
+            <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={50}
+                   className={inputClass} />
+          </label>
+          <label className="block">
+            <span className="text-sm text-slate-600">อีเมล</span>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                   autoComplete="email" className={inputClass} />
+          </label>
+          <label className="block">
+            <span className="text-sm text-slate-600">รหัสผ่าน (8–72 ตัวอักษร)</span>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                   autoComplete="new-password" className={inputClass} />
+          </label>
+          <label className="block">
+            <span className="text-sm text-slate-600">ยืนยันรหัสผ่าน</span>
+            <input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)}
+                   autoComplete="new-password" className={inputClass} />
+          </label>
+          {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
+          <button type="submit" disabled={status === 'submitting'} className={'w-full ' + btnPrimary}>
+            {status === 'submitting' ? 'กำลังสมัคร...' : 'สมัครสมาชิก'}
+          </button>
+        </form>
 
-      <p className="mt-6 text-sm text-slate-500">
-        มีบัญชีแล้ว? <Link to="/login" className="text-emerald-700 hover:underline">เข้าสู่ระบบ</Link>
-      </p>
+        <p className="mt-6 text-sm text-slate-500">
+          มีบัญชีแล้ว? <Link to="/login" className="text-emerald-700 hover:underline">เข้าสู่ระบบ</Link>
+        </p>
+      </div>
     </div>
   );
 }

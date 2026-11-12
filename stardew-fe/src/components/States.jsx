@@ -37,6 +37,9 @@ export const btnGhost =
   'rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 disabled:text-slate-300';
 export const btnDanger =
   'rounded-lg border border-red-300 bg-white px-4 py-2 text-sm text-red-700 hover:bg-red-50 disabled:text-slate-300';
+// ช่องกรอก/ตัวเลือกขนาดเล็ก (แถบค้นหาใต้หัวข้อ)
+export const smallInputClass =
+  'rounded-lg border-2 border-[#c48a4f] bg-[#fffaf0] px-3 py-1.5 text-sm focus:border-[#8b5a2b] focus:outline-none focus:ring-2 focus:ring-amber-100';
 export const inputClass =
   'w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-100';
 
