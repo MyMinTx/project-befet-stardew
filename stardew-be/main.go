@@ -59,6 +59,7 @@ func main() {
 	}
 
 	// 4) ผูก URL เข้ากับฟังก์ชัน
+	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok", "version": "1.0.0"})
 	})
@@ -68,7 +69,7 @@ func main() {
 			"health": "/api/health",
 		})
 	})
-	
+
 	mux.HandleFunc("GET /api/items", itemHandler.List)
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 	mux.HandleFunc("GET /api/npcs", npcHandler.List)
