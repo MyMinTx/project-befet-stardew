@@ -62,7 +62,15 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		utils.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+	}
+		mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		utils.WriteJSON(w, http.StatusOK, map[string]string{
+			"name":   "Stardew Guide API",
+			"health": "/api/health",
+			"docs":   "https://github.com/<ชื่อ>/project-befet-stardew/blob/main/docs/api-contract.md",
+		})
 	})
+)
 	mux.HandleFunc("GET /api/items", itemHandler.List)
 	mux.HandleFunc("GET /api/items/{id}", itemHandler.Get)
 	mux.HandleFunc("GET /api/npcs", npcHandler.List)
